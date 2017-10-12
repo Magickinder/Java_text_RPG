@@ -10,28 +10,30 @@ public class Main {
 		Scanner in = new Scanner(System.in);
 		Random rand = new Random();
 		
-		// zmienne gracza
+		//PLAYER VARIABLES
 		String playerName;
 		int playerHealth = 100;
+		int player_max_health = 100;
 		int player_min_damage = 2;
 		int player_max_damage = 7;
-		int playerGold = 30;
+		int playerGold = 600;
 		
-		//mikstury
+		//POTIONS
 		int health_potion_max_amount = 10;
-		int healt_potion_heal_amount = 30;
+		int health_potion_heal_amount = 30;
 		int health_potion_amount = 2;
+		int health_potion_heal_part;;
 		
-		//ekwipunek
+		//INVENTORY
 		String[] inventory = new String[10];
 		
-		//przedmioty
+		//ITEMS
 		int itemValue = 0;
 		int itemDamage = 0;
 		int itemID = 0;
 		int sellValue = 0;
 		
-		// zmienne potworów
+		//MONSTERS VARIABLES
 		String[] firstMonsters = {"Goblin", "Wilk"};
 		String[] secondMonsters = {"Szkielet", "Szkielet - wojownik", "Zombie", "Duch"};
 		int monsterHealth;
@@ -43,7 +45,7 @@ public class Main {
 		
 		boolean game = true;
 		
-		//nazwa postaci
+		//PLAYER NAME AND WELCOME MESSAGE
 		System.out.print("Witaj w grze Dungeon! Podaj nazwę swojej postaci: ");
 		playerName = in.nextLine();
 		System.out.print("\n");
@@ -54,6 +56,7 @@ public class Main {
 		
 		GAME:
 		while(game) {
+			System.out.println("Zdrowie: " + playerHealth);
 			System.out.println("1. Idź do lochu.");
 			System.out.println("2. Idź do sklepu.");
 			System.out.println("3. Ekwipunek.");
@@ -61,13 +64,14 @@ public class Main {
 			int input = in.nextInt();
 			System.out.println("\n");
 			
-			if(input == 1) { //============================================================================
+			if(input == 1) { //============================FIRST DUNGEON================================================
+								
 			
 			for(int a = 0; a < 2; a++) {
 			
 			System.out.println("\t^^^Loch pierwszy^^^\n");
 				
-			// generowanie przeciwnika
+			//GENERATING MONSTERS
 			String monster = firstMonsters[rand.nextInt(firstMonsters.length)];
 			if(monster == "Goblin") {
 				monsterHealth = 5;
@@ -88,7 +92,7 @@ public class Main {
 			
 			System.out.println("Napotkałeś " + monster + "!");
 			
-			//walka
+			//BATTLE
 			while(monsterHealth > 0) {
 				System.out.println("Twoje zdrowie: " + playerHealth);
 				System.out.println("Zdrowie przeciwnika: " + monsterHealth);
@@ -98,6 +102,7 @@ public class Main {
 				int input2 = in.nextInt();
 				System.out.print("\n");
 				
+				//COMBAT
 				if(input2 == 1) {
 					int damageDealt = rand.nextInt(player_max_damage - player_min_damage) 
 							+ player_min_damage;
@@ -121,12 +126,24 @@ public class Main {
 						break;
 					}
 				}
+				//HEALING
 				else if(input2 == 2) {
-					if(health_potion_amount > 0) {
-						playerHealth += healt_potion_heal_amount;
+					if(health_potion_amount > 0) { 						
+						playerHealth += health_potion_heal_amount;
 						health_potion_amount--;
-						System.out.println("Pijesz miksturę lecząc się za " + healt_potion_heal_amount + " punktów życia.");
+						if(playerHealth > player_max_health) {
+							health_potion_heal_part = health_potion_heal_amount - (playerHealth - player_max_health);
+							System.out.println("Pijesz miksturę lecząc się za " +  health_potion_heal_part 
+									+ " punktów życia.");
+							playerHealth = player_max_health;
+							
+						}
+						
+						else {
+						System.out.println("Pijesz miksturę lecząc się za " + health_potion_heal_amount + " punktów życia.");
+						}
 					}
+					
 					else {
 						System.out.println("Nie masz żadnych mikstur.");
 					}
@@ -136,11 +153,14 @@ public class Main {
 				}
 				
 			  }
+			//PLAYER DEFEATED
 			if(playerHealth < 1) {
 				System.out.println("Ledwo żywy uciekasz z lochu.");
-				break; 
+				playerHealth = 1; 
+				continue GAME;
 			}
 					
+			//END OF BATTLE AND DROPS
 			System.out.println(monster + " został pokonany.\n");
 			if(monster_min_gold_drop >= 0 && monster_max_gold_drop > 0) {
 				int goldDrop = rand.nextInt(monster_max_gold_drop - monster_min_gold_drop) + monster_min_gold_drop;
@@ -174,11 +194,12 @@ public class Main {
 				System.out.println("Wychodzisz z lochu.\n");
 				continue GAME;
 					}
-			}   //===============================================================================
+			}   //=================================SECOND DUNGEON==============================================
 			
 			for(int b = 0; b < 4; b++) {
 				System.out.println("\t^^^Loch Drugi^^^\n");
 				
+				//GENERATING MONSTERS
 				String monster = secondMonsters[rand.nextInt(secondMonsters.length)];
 				if(monster == "Szkielet") {
 					monsterHealth = 13;
@@ -215,14 +236,16 @@ public class Main {
 				
 				System.out.println("Napotkałeś " + monster + "!");
 				
+				//BATTLE
 				while(monsterHealth > 0) {
 					System.out.println("Twoje zdrowie: " + playerHealth);
 					System.out.println("Zdrowie przeciwnika: " + monsterHealth);
 					System.out.println("\nCo chcesz zrobić?");
 					System.out.println("1. Zaatakować.");
-					System.out.println("2. Uciec.\n");
+					System.out.println("2. Wypić miksturę.\n");
 					int input4 = in.nextInt();
 					
+					//COMBAT
 					if(input4 == 1) {
 						int damageDealt = rand.nextInt(player_max_damage - player_min_damage) 
 								+ player_min_damage;
@@ -247,12 +270,25 @@ public class Main {
 							break;
 						}
 					}
+					
+					//HEALING
 						else if(input4 == 2) {
-							if(health_potion_amount > 0) {
-								playerHealth += healt_potion_heal_amount;
+							if(health_potion_amount > 0) { 						
+								playerHealth += health_potion_heal_amount;
 								health_potion_amount--;
-								System.out.println("Pijesz miksturę lecząc się za " + healt_potion_heal_amount + " punktów życia.");
+								if(playerHealth > player_max_health) {
+									health_potion_heal_part = health_potion_heal_amount - (playerHealth - player_max_health);
+									System.out.println("Pijesz miksturę lecząc się za " +  health_potion_heal_part 
+											+ " punktów życia.");
+									playerHealth = player_max_health;
+									
+								}
+								
+								else {
+								System.out.println("Pijesz miksturę lecząc się za " + health_potion_heal_amount + " punktów życia.");
+								}
 							}
+							
 							else {
 								System.out.println("Nie masz żadnych mikstur.");
 							}
@@ -262,13 +298,15 @@ public class Main {
 							System.out.println("Niewłaściwa opcja.\n");
 						} }
 						
+						//PLAYER DEFEATED
 						if(playerHealth < 1) {
 							System.out.println("Ledwo żywy uciekasz z lochu.\n");
-							break;
+							playerHealth = 1;
+							continue GAME;
 						}
 					
 				
-						
+				//END OF BATTLE AND DROPS		
 				System.out.println(monster + " został pokonany.\n");
 				if(monster_min_gold_drop >= 0 && monster_max_gold_drop > 0) {
 					int goldDrop = rand.nextInt(monster_max_gold_drop - monster_min_gold_drop) + monster_min_gold_drop;
@@ -303,7 +341,7 @@ public class Main {
 					continue GAME;
 						}
 				
-			}} //============================================================================================
+			}} //===================================SHOP=========================================================
 			
 			 if(input == 2) {
 				System.out.println("Witaj w sklepie " + playerName + ".\n");
@@ -443,10 +481,16 @@ public class Main {
 				 		} /////	
 		 				System.out.print("Wybierz przemiot: ");
 				 		int input8 = in.nextInt();
+				 		System.out.println("\nZłoto: " + playerGold);
 				 		System.out.println("Co chcesz z nim zrobić?");
 				 		System.out.println("1. Sprzedaj.");
 				 		System.out.println("2. Wróć.");
 				 		int input9 = in.nextInt();
+				 			
+				 			if(input9 == 1) {
+				 				playerGold += sellValue;
+				 				inventory[input8 - 1] = null;
+				 			}
 					}
 					
 					if(input6 == 3) {
@@ -455,7 +499,7 @@ public class Main {
 					
 				}
 			 
-			 	if(input == 3) {
+			 	if(input == 3) { //=========================INVENTORY==================================
 			 		int num = 1;
 				 		for(int i = 0; i < 10; i++) {
 				 			if(inventory[i] != null) {
