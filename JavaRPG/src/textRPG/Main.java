@@ -59,8 +59,7 @@ public class Main {
 			System.out.println("Zdrowie: " + playerHealth);
 			System.out.println("1. Idź do lochu.");
 			System.out.println("2. Idź do sklepu.");
-			System.out.println("3. Ekwipunek.");
-			System.out.println("4. Zapisz grę.\n");
+			System.out.println("3. Ekwipunek.");			
 			int input = in.nextInt();
 			System.out.println("\n");
 			
